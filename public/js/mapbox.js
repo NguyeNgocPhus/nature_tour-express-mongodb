@@ -7,7 +7,6 @@ export const displayMap = (location) => {
     container: 'map',
     style: 'mapbox://styles/nguyenngocphu0166/ckqtpgfej54ew18o0bgw0fsd7/draft',
     //center: [-74.387161, 40.65034],
-    scrollZoom: false,
   });
 
   const bounds = new mapboxgl.LngLatBounds();
@@ -27,7 +26,7 @@ export const displayMap = (location) => {
 
     // Add popup
     new mapboxgl.Popup({
-      offset: 30,
+      offset: 100,
     })
       .setLngLat(loc.coordinates)
       .setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`)

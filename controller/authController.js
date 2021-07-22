@@ -2,7 +2,7 @@ const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-
+const Email = require('../utils/email');
 const createSendToken = async (user, status, res) => {
   const token = jwt.sign({ id: user._id }, 'phu', {
     expiresIn: 24 * 60 * 60 * 1000,
@@ -31,6 +31,9 @@ module.exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
+  const url = `${req.protocol}://${req.get('host')}/me`;
+  // console.log(url);
+  await new Email(newUser, url).sendWelcome();
   //console.log(newUser);
 
   createSendToken(newUser, 200, res);

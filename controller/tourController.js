@@ -1,6 +1,68 @@
 const Tour = require('../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
 const appError = require('../utils/appError');
+const Factory = require('../controller/handleFactory');
+const multer = require('multer');
+const sharp = require('sharp');
+const catchAsync = require('../utils/catchAsync');
+
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! Please upload only images.', 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+module.exports.uploadTourPhoto = upload.fields([
+  { name: 'imageCover', maxCount: 1 },
+  { name: 'images', maxCount: 3 },
+]);
+
+module.exports.resizeTourPhoto = catchAsync(async (req, res, next) => {
+  if (!req.files.imageCover) {
+    return next();
+  }
+  req.files.imageCover.fieldname = `tour-${req.params.id}-${Date.now()}.jpeg`;
+  // console.log(req.files.imageCover.fieldname);
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(2000, 1333)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/tours/${req.files.imageCover.fieldname}`);
+
+  req.body.imageCover = req.files.imageCover.fieldname;
+  //console.log(req.files.images);
+  if (!req.files.images) {
+    return next();
+  }
+  req.body.images = [];
+  await Promise.all(
+    req.files.images.map(async (file, i) => {
+      file.fieldname = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+      console.log(file.fieldname);
+
+      req.body.images.push(file.fieldname);
+      await sharp(file.buffer)
+        .resize(2000, 1333)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${file.fieldname}`);
+    })
+  );
+  next();
+
+  //next();
+});
+
+module.exports.updateTour = Factory.updateOne(Tour);
 
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -57,10 +119,10 @@ exports.getTour = async (req, res) => {
 exports.createTour = async (req, res) => {
   try {
     //
-
+    req.body.guides = req.user.id;
     const newTour = await Tour.create(req.body);
 
-    // if (!newTour) res.send('faloi');
+    //  if (!newTour) res.send('faloi');
     res.status(201).json({
       status: 'success',
       data: {
@@ -69,27 +131,6 @@ exports.createTour = async (req, res) => {
     });
   } catch (err) {
     res.status(400).json({
-      status: 'fail',
-      message: err,
-    });
-  }
-};
-
-exports.updateTour = async (req, res) => {
-  try {
-    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        tour,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
       status: 'fail',
       message: err,
     });

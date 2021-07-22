@@ -7,14 +7,17 @@ const tourRouter = require('./router/tourRouter');
 const userRouter = require('./router/userRouter');
 const authRouter = require('./router/authRouter');
 const viewRouter = require('./router/viewRouter');
-
+const bookingRouter = require('./router/bookingRouter');
 const globalErrorHandler = require('./controller/errorController');
+
+const compression = require('compression');
 const app = express();
 
 // 1) MIDDLEWARES
 if (process.env.NODE_ENV === 'development') {
   //app.use(morgan('dev'));
 }
+app.use(compression());
 
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
@@ -32,6 +35,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/', authRouter);
+app.use('/api/v1/booking', bookingRouter);
 app.use('/', viewRouter);
 app.use(globalErrorHandler);
 
