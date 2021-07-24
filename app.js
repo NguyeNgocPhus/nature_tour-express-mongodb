@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
-
+const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const tourRouter = require('./router/tourRouter');
 const userRouter = require('./router/userRouter');
@@ -14,12 +14,18 @@ const cors = require("cors");
 
 const compression = require("compression");
 const app = express();
-
+app.post(
+  "/webhook-checkout",
+  bodyParser.raw({ type: "application/json" }),
+  bookingController.webhookCheckout
+);
 // 1) MIDDLEWARES
 if (process.env.NODE_ENV === "development") {
   //app.use(morgan('dev'));
 }
 app.use(compression());
+
+
 
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
@@ -35,11 +41,7 @@ app.use((req, res, next) => {
 });
 
 // 3) ROUTES
-app.post(
-  "/webhook-checkout",
-  express.raw({ type: "application/json" }),
-  bookingController.webhookCheckout
-);
+
 app.use("/api/v1/tours", cors(), tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/", authRouter);

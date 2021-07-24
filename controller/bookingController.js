@@ -51,12 +51,13 @@ module.exports.getCheckoutSession = async (req, res, next) => {
 // };
 async function createBooking(session) {
   const tour = client_reference_id;
-  const user = (await User.find({ email: customer_email }))._id;
+  const user = (await User.findOne({ email: customer_email }))._id;
   const price = session.line_items[0].amount / 100;
   await Booking.create({ tour, user, price });
 }
 module.exports.webhookCheckout = async (req, res, next) => {
   const signature = req.headers["stripe-signature"];
+
   let event;
   try {
     event = stripe.webhooks.constructEvent(
