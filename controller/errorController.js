@@ -21,8 +21,8 @@ const handleValidationErrorDB = (err) => {
 
 const sendErrorDev = (err, req, res) => {
   //console.log(err.message);
-
-  if (req.originalUrl.startsWith('/api')) {
+  // lỗi ở api
+  if (req.originalUrl.startsWith("/api")) {
     return res.status(500).json({
       status: err.status,
       error: err,
@@ -30,8 +30,9 @@ const sendErrorDev = (err, req, res) => {
       stack: err.stack,
     });
   } else {
-    res.status(err.statusCode).render('error', {
-      title: 'Something went wrong!',
+    // lỗi khi render trang sai
+    res.status(err.statusCode).render("error", {
+      title: "Something went wrong!",
       msg: err.message,
     });
   }

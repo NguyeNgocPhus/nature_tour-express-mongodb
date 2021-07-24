@@ -1,12 +1,14 @@
 /* eslint-disable */
 import axios from 'axios';
 import { showAlert } from './alert';
+
+// sử thông tin
 export const update = async (data, type) => {
   try {
     const url =
-      type === 'password'
-        ? '/api/v1/users/UpdateMyPassword'
-        : '/api/v1/users/UpdateMe';
+      type === 'password' 
+        ? '/api/v1/users/UpdateMyPassword' /// update password
+        : '/api/v1/users/UpdateMe'; // update profile
     console.log(data);
     const res = await axios({
       method: 'PATCH',

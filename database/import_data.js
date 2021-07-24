@@ -18,31 +18,31 @@ mongoose
   .then(() => console.log('DB connection successful!'));
 
 const tour = JSON.parse(
-  fs.readFileSync(`${__dirname}/data_tour.json`, 'utf-8')
+  fs.readFileSync(`${__dirname}/data_tour.json`, "utf-8")
 );
 const user = JSON.parse(
-  fs.readFileSync(`${__dirname}/data_user.json`, 'utf-8')
+  fs.readFileSync(`${__dirname}/data_user.json`, "utf-8")
 );
 const review = JSON.parse(
-  fs.readFileSync(`${__dirname}/data_review.json`, 'utf-8')
+  fs.readFileSync(`${__dirname}/data_review.json`, "utf-8")
 );
 
 const importTour = async () => {
   try {
-    // await Tour.create(tour);
+    await Tour.create(tour);
     await User.insertMany(user);
-    // await Review.insertMany(review);
-    console.log('success');
+    await Review.insertMany(review);
+    console.log("success");
   } catch (error) {
     console.log(error.message);
   }
 };
 const deleteTour = async () => {
   try {
-    //await Tour.deleteMany({});
+    await Tour.deleteMany({});
     await User.deleteMany({});
-    // await Review.deleteMany({});
-    console.log('success');
+    await Review.deleteMany({});
+    console.log("success");
   } catch (error) {
     console.log(error.message);
   }

@@ -5,26 +5,30 @@ const authController = require('../controller/authController');
 const router = express.Router();
 
 router
-  .route('/')
+  .route("/users/")
   .get(userController.getAllUsers)
   .post(userController.createUser);
 
 router.patch(
-  '/updateMe',
+  "/users/updateMe",
   authController.protect,
   userController.uploadUserPhoto,
   userController.resizeUserPhoto,
   userController.UpdateMe
 );
-router.delete('/deleteMe', authController.protect, userController.deleteMe);
+router.delete(
+  "/users/deleteMe",
+  authController.protect,
+  userController.deleteMe
+);
 router.patch(
-  '/UpdateMyPassword',
+  "/users/UpdateMyPassword",
   authController.protect,
   userController.UpdateMyPassword
 );
 
 router
-  .route('/:id')
+  .route("/users/:id")
   .get(userController.getUser)
   .patch(userController.updateUser)
   .delete(userController.deleteUser);

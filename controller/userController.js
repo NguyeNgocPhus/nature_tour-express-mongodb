@@ -15,13 +15,13 @@ const sharp = require('sharp');
 //     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
 //   },
 // });
-const multerStorage = multer.memoryStorage();
+const multerStorage = multer.memoryStorage(); // upload ảnh người dùng vào merory
 
 const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) {
+  if (file.mimetype.startsWith("image")) {
     cb(null, true);
   } else {
-    cb(new AppError('Not an image! Please upload only images.', 400), false);
+    cb(new AppError("Not an image! Please upload only images.", 400), false);
   }
 };
 
@@ -30,11 +30,11 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
-exports.uploadUserPhoto = upload.single('photo');
-
+exports.uploadUserPhoto = upload.single("photo");
+// định dạng lại file ảnh
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) {
-    console.log('file o day');
+    console.log("file o day");
     return next();
   }
 
@@ -42,15 +42,15 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 
   await sharp(req.file.buffer)
     .resize(500, 500)
-    .toFormat('jpeg')
+    .toFormat("jpeg")
     .jpeg({ quality: 90 })
     .toFile(`public/img/users/${req.file.filename}`);
 
   next();
 });
-
+// tạo token
 const createSendToken = async (user, status, res) => {
-  const token = jwt.sign({ id: user._id }, 'phu', {
+  const token = jwt.sign({ id: user._id }, "phu", {
     expiresIn: 24 * 60 * 60 * 1000,
   });
   // console.log(token);
@@ -58,11 +58,11 @@ const createSendToken = async (user, status, res) => {
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     httpOnly: true,
   };
-  res.cookie('jwt', token, cookieOption);
+  res.cookie("jwt", token, cookieOption);
 
   user.password = undefined;
   res.status(status).json({
-    status: 'success',
+    status: "success",
     token,
     data: {
       user,
@@ -79,18 +79,18 @@ const filterObj = async (obj, ...allowedFields) => {
   });
   return newObj;
 };
-
+// update profile
 module.exports.UpdateMe = async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(
       new AppError(
-        'This route is not for password updates. Please use /updateMyPassword.',
+        "This route is not for password updates. Please use /updateMyPassword.",
         400
       )
     );
   }
 
-  const filteredBody = await filterObj(req.body, 'name', 'email');
+  const filteredBody = await filterObj(req.body, "name", "email"); // chỉ dc upload name và email. ko dc upload password
   if (req.file) filteredBody.photo = req.file.filename;
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
@@ -98,12 +98,13 @@ module.exports.UpdateMe = async (req, res, next) => {
   });
 
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
       user: updatedUser,
     },
   });
 };
+// xóa profile
 module.exports.deleteMe = async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
 
@@ -112,6 +113,7 @@ module.exports.deleteMe = async (req, res, next) => {
     data: null,
   });
 };
+/// update password
 module.exports.UpdateMyPassword = catchAsync(async (req, res, next) => {
   const password_current = req.body.password_current;
   const password1 = req.body.password;

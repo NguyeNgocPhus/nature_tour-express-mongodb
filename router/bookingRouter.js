@@ -6,9 +6,9 @@ const bookingController = require('../controller/bookingController');
 const router = express.Router();
 
 router.get(
-  '/checkout-session/:tourId',
+  "/booking/checkout-session/:tourId",
   authController.protect,
   bookingController.getCheckoutSession
-);
+); // tạo booking bằng stripe
 
 module.exports = router;
