@@ -9,12 +9,11 @@ const authRouter = require('./router/authRouter');
 const viewRouter = require('./router/viewRouter');
 const bookingRouter = require('./router/bookingRouter');
 const globalErrorHandler = require('./controller/errorController');
+const bookingController = require("./controller/bookingController");
 const cors = require("cors");
 
 const compression = require("compression");
 const app = express();
-
-
 
 // 1) MIDDLEWARES
 if (process.env.NODE_ENV === "development") {
@@ -36,12 +35,16 @@ app.use((req, res, next) => {
 });
 
 // 3) ROUTES
-
-app.use("/api/v1/tours", cors(),tourRouter);
+app.post(
+  "/webhook-checkout",
+  express.raw({ type: "application/json" }),
+  bookingController.webhookCheckout
+);
+app.use("/api/v1/tours", cors(), tourRouter);
 app.use("/api/v1/users", userRouter);
-app.use('/api/v1/', authRouter);
-app.use('/api/v1/booking', bookingRouter);
-app.use('/', viewRouter);
+app.use("/api/v1/", authRouter);
+app.use("/api/v1/booking", bookingRouter);
+app.use("/", viewRouter);
 app.use(globalErrorHandler);
 
 module.exports = app;
