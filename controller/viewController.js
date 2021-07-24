@@ -7,30 +7,31 @@ const User = require('../models/userModel');
 module.exports.overview = async (req, res, next) => {
   const tour = await Tour.find();
   //console.log(tour);
-  res.render('overview', {
-    title: 'dmmmmmmmmmmmmmmmmm',
+  res.render("overview", {
+    title: "dmmmmmmmmmmmmmmmmm",
     tours: tour,
   });
 };
 module.exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findOne({ slug: req.params.slug }).populate({
-    path: 'reviews',
-    fields: 'review rating user',
+    path: "reviews",
+    fields: "review rating user",
   });
   if (!tour) {
-    return next(new appError('sai mm roi', 404));
+    return next(new appError("sai mm roi", 404));
   }
-  res.render('tour', {
+  res.render("tour", {
     title: `${tour.name}`,
     tour: tour,
   });
 });
 module.exports.login = async (req, res, next) => {
-  res.render('login', {});
+  res.render("login", {});
+  console.log("ok");
 };
 module.exports.me = async (req, res, next) => {
-  res.render('account', {
-    title: 'hello',
+  res.render("account", {
+    title: "hello",
   });
 };
 module.exports.getmytour = async (req, res, next) => {
@@ -41,8 +42,8 @@ module.exports.getmytour = async (req, res, next) => {
   const tourIDs = mytour.map((el) => el.tour._id);
   const tours = await Tour.find({ _id: { $in: tourIDs } });
   //console.log(tours);
-  res.render('overview', {
-    title: 'dmmmmmmmmmmmmmmmmm',
+  res.render("overview", {
+    title: "dmmmmmmmmmmmmmmmmm",
     tours: tours,
   });
 };
