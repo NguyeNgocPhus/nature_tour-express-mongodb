@@ -17,7 +17,7 @@ module.exports.getCheckoutSession = async (req, res, next) => {
     // success_url: `${req.protocol}://${req.get('host')}/my-tours/?tour=${
     //   req.params.tourId
     // }&user=${req.user.id}&price=${tour.price}`,
-    success_url: `${req.protocol}://${req.get("host")}`,
+    success_url: `${req.protocol}://${req.get("host")}/my-tours`,
     cancel_url: `${req.protocol}://${req.get("host")}/tour/${tour.slug}`,
     customer_email: req.user.email,
     client_reference_id: req.params.tourId,
@@ -59,7 +59,7 @@ module.exports.webhookCheckout = async (req, res, next) => {
   const signature = req.headers["stripe-signature"];
   let event;
   try {
-    event = stripe.webhook.construcEvent(
+    event = stripe.webhooks.construcEvent(
       req.body,
       signature,
       process.env.STRIPE_SECRET_WEBHOOK
