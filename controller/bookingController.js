@@ -52,7 +52,7 @@ module.exports.getCheckoutSession = async (req, res, next) => {
 async function createBooking(session) {
   const tour = session.client_reference_id;
   const user = (await User.findOne({ email: session.customer_email }))._id;
-  const price = session.line_items[0].amount / 100;
+  const price = session.amount_subtotal / 100;
   await Booking.create({ tour, user, price });
 }
 module.exports.webhookCheckout = async (req, res, next) => {
