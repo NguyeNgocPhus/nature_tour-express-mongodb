@@ -14,8 +14,8 @@ const cors = require("cors");
 const compression = require("compression");
 const app = express();
 
-app.use(cors());
-app.options("*", cors());
+
+
 // 1) MIDDLEWARES
 if (process.env.NODE_ENV === "development") {
   //app.use(morgan('dev'));
@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 
 // 3) ROUTES
 
-app.use("/api/v1/tours", tourRouter);
+app.use("/api/v1/tours", cors(),tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use('/api/v1/', authRouter);
 app.use('/api/v1/booking', bookingRouter);
