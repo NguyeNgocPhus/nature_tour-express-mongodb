@@ -29,8 +29,8 @@ const review = JSON.parse(
 
 const importTour = async () => {
   try {
-    await Tour.create(tour);
-    // await User.insertMany(user);
+    // await Tour.create(tour);
+    await User.insertMany(user);
     // await Review.insertMany(review);
     console.log('success');
   } catch (error) {
@@ -39,8 +39,8 @@ const importTour = async () => {
 };
 const deleteTour = async () => {
   try {
-    await Tour.deleteMany({});
-    // await User.deleteMany({});
+    //await Tour.deleteMany({});
+    await User.deleteMany({});
     // await Review.deleteMany({});
     console.log('success');
   } catch (error) {

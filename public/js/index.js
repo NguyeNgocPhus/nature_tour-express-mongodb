@@ -4,7 +4,9 @@ import '@babel/polyfill';
 import { displayMap } from './mapbox';
 import { login, logout } from './login';
 import { update } from './updateSetting';
+import { bookTour } from './stripe';
 
+const bookBtn = document.getElementById('book-tour');
 const mapBox = document.getElementById('map');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const doc = document.querySelector('.form--login');
@@ -47,5 +49,14 @@ if (formUserPassword) {
     const password_confirm = document.getElementById('password-confirm').value;
     console.log({ password_current, password, password_confirm });
     update({ password_current, password, password_confirm }, 'password');
+  });
+}
+
+if (bookBtn) {
+  bookBtn.addEventListener('click', (e) => {
+    e.target.textContent = 'Processing...';
+
+    const { tourId } = e.target.dataset;
+    bookTour(tourId);
   });
 }

@@ -21,7 +21,9 @@ app.use(compression());
 
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
+
 app.use(cookieParser());
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 app.use((req, res, next) => {
